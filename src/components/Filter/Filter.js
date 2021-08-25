@@ -1,6 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import style from './Filter.module.css';
+import actions from '../../redux/contacts-actions';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 const Filter = ({ value, onChange }) => {
   return (
@@ -21,4 +23,13 @@ Filter.propType = {
   onChange: PropTypes.func.isRequired,
 };
 
-export default Filter;
+const mapStateToProps = state => ({
+  //! Ниже ошибка
+  value: state.contacts.filter,
+});
+
+const mapDispatchToProps = dispatch => ({
+  onChange: event => dispatch(actions.ChangeFilter(event.target.value)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Filter);
