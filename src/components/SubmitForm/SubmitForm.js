@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
 import s from './SubmitForm.module.css';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import shortid from 'shortid';
 import PropTypes from 'prop-types';
+import contactsActions from '../../redux/contacts-actions';
+import { getContacts } from 'redux/contacts-selector';
+import notify from 'helpers/Toast';
+import { ToastContainer } from 'react-toastify';
 
-function SubmitForm({ onSubmit }) {
+function SubmitForm() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
   const [id, setId] = useState('');
   const uniqeID = shortid();
+  const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
 
   const handleInputChange = event => {
     const { name, value, id } = event.target;
@@ -31,8 +38,16 @@ function SubmitForm({ onSubmit }) {
   const handleSubmit = event => {
     event.preventDefault();
 
-    //* Передаем в пропс чтоб прочитать в App
-    onSubmit({ id, number, name });
+    if (
+      contacts.find(
+        contact => contact.name.toLowerCase() === name.toLocaleLowerCase(),
+      )
+    ) {
+      notify(name);
+      return;
+    }
+
+    dispatch(contactsActions.AddContact({ name, number }));
     reset();
   };
 
@@ -95,9 +110,5 @@ function SubmitForm({ onSubmit }) {
     </>
   );
 }
-
-SubmitForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-};
 
 export default SubmitForm;

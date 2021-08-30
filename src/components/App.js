@@ -11,8 +11,8 @@ import ContactList from './ContactList';
 import Filter from './Filter';
 
 function App() {
-  const [contacts, setContacts] = useLocalStorage('contacts', '');
-  const [filter, setFilter] = useState('');
+  // const [contacts, setContacts] = useLocalStorage('contacts', '');
+  // const [filter, setFilter] = useState('');
 
   // const AddContactOnSubmit = newContact => {
   //   console.log(contacts);

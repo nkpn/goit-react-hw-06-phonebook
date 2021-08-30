@@ -2,61 +2,63 @@ import React from 'react';
 import style from './ContactList.module.css';
 import PropTypes from 'prop-types';
 import actions from '../../redux/contacts-actions';
-import { connect } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
+import { getVisibleContacts } from 'redux/contacts-selector';
+import contactsActions from '../../redux/contacts-actions';
 
-const ContactList = ({ contacts, deleteContact }) => {
+const ContactList = () => {
+  const contacts = useSelector(getVisibleContacts);
+  const dispatch = useDispatch();
+  const deleteContact = id => dispatch(contactsActions.deleteContact(id));
+
   return (
     <div className={style.Contacts__container}>
       <ul className={style.Contact__list}>
-        {contacts &&
-          contacts.map(contact => {
-            return (
-              <li key={contact.id} className={style.Contact__item}>
-                {contact.name} : {contact.number}
-                <button
-                  type="button"
-                  onClick={() => {
-                    deleteContact(contact.id);
-                  }}
-                >
-                  Delete
-                </button>
-              </li>
-            );
-          })}
+        {contacts.map(contact => {
+          return (
+            <li key={contact.id} className={style.Contact__item}>
+              {contact.name} : {contact.number}
+              <button
+                type="button"
+                onClick={() => {
+                  deleteContact(contact.id);
+                }}
+              >
+                Delete
+              </button>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
 };
 
-const getVisibleContacts = (contacts, filter) => {
-  const normalizedFilter = filter.toLowerCase();
+// const mapStateToProps = state => {
+//   const { contacts, filter } = state;
 
-  return contacts.filter(({ name }) =>
-    name.toLowerCase().includes(normalizedFilter),
-  );
-};
+//   const visibleContacts = contacts.filter(contact =>
+//     contact.name.toLowerCase().includes(filter.toLowerCase()),
+//   );
+//   return { contacts: visibleContacts };
+// };
 
-const mapStateToProps = ({ ContactList: { contacts, filter } }) => {
-  return { contacts: getVisibleContacts(contacts, filter) };
-};
+// const mapDispatchToProps = dispatch => ({
+//   deleteContact: id => dispatch(actions.deleteContact(id)),
+// });
 
-const mapDispatchToProps = dispatch => ({
-  deleteContact: id => dispatch(actions.deleteContact(id)),
-});
+// ContactList.propTypes = {
+//   contacts: PropTypes.oneOfType([
+//     PropTypes.arrayOf(
+//       PropTypes.shape({
+//         id: PropTypes.string.isRequired,
+//         name: PropTypes.string.isRequired,
+//         number: PropTypes.string.isRequired,
+//       }),
+//     ),
+//     PropTypes.array,
+//   ]),
+//   deleteContact: PropTypes.func.isRequired,
+// };
 
-ContactList.propTypes = {
-  contacts: PropTypes.oneOfType([
-    PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        number: PropTypes.string.isRequired,
-      }),
-    ),
-    PropTypes.array,
-  ]),
-  deleteContact: PropTypes.func.isRequired,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(ContactList);
+export default ContactList;
